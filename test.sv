@@ -7,8 +7,7 @@ module lfsr(
 
   logic linear_feedback;
 
-  wire tmp = out[7] ^ out[3];
-  assign linear_feedback = !tmp;
+  assign linear_feedback = !(out[7] ^ out[3]);
 
   always_ff @(posedge clk or posedge reset)
     if (reset) begin
