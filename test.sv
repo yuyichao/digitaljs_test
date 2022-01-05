@@ -1,29 +1,23 @@
-// D latch (gate model)
-module d_latch(
-  input d, e,
-  output q, nq
+// Linear feedback shift register
+module lfsr(
+    output logic [7:0] out,
+    input clk,
+    input reset
 );
 
-  logic s, r;
+  logic linear_feedback;
 
-  nor g1(q, r, nq);
-  nor g2(nq, s, q);
-  and g3(r, e, nd);
-  and g4(s, e, d);
-  not g5(nd, d);
+  wire tmp = out[7] ^ out[3];
+  assign linear_feedback = !tmp;
 
-endmodule
-
-// master-slave D flip-flop
-module dff_master_slave(
-  input clk, d,
-  output o
-);
-
-  logic q, nq1, nq2, nclk;
-
-  d_latch dl1(d, clk, q, nq1);
-  d_latch dl2(q, nclk, o, nq2);
-  not g(nclk, clk);
+  always_ff @(posedge clk or posedge reset)
+    if (reset) begin
+      out <= 8'b0 ;
+    end else begin
+      out <= {out[6],out[5],
+              out[4],out[3],
+              out[2],out[1],
+              out[0], linear_feedback};
+    end 
 
 endmodule
